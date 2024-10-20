@@ -30,11 +30,17 @@ def combine_rules_api():
 
 @app.route('/evaluate_rule', methods=['POST'])
 def evaluate_rule_api():
-    rule_id = request.json.get("rule_id")
-    data = request.json.get("data")
+    rule_id = request.json.get('rule_id')
+    data = request.json.get('data')
+
     ast = rules_db.get_rule_ast(rule_id)
+    if ast is None:
+        print(f"Error: No AST found for rule_id: {rule_id}")
+        return jsonify({"error": "Rule not found"}), 404
+
     result = evaluate_rule(ast, data)
     return jsonify({"result": result})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
